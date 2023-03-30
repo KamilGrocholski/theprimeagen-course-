@@ -1,4 +1,4 @@
-class SingularNode<T> {
+export class SingularNode<T> {
     value: T
     next: SingularNode<T> | null = null
 
@@ -68,6 +68,14 @@ export default class SingularLinkedList<T> {
     clear(): void {
         this._size = 0
         this._head = this._tail = null
+    }
+
+    get head(): T | undefined {
+        return this._head?.value
+    }
+
+    get tail(): T | undefined {
+        return this._tail?.value
     }
 
     get size(): number {

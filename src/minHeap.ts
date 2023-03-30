@@ -1,56 +1,102 @@
-export default class MinHeap<T> {
-    public length: number
-    _storage: T[]
+import { COMPARISON, CompareFn, defaultCompareFn, swap } from './utils'
 
-    constructor() {
-        this._storage = []
-        this.length = 0
+export default class MinHeap<T> {
+    #length: number
+    #compareFn: CompareFn<T>
+    #heap: T[]
+
+    constructor(compareFn: CompareFn<T> = defaultCompareFn) {
+        this.#length = 0
+        this.#heap = []
+        this.#compareFn = compareFn
     }
 
     insert(value: T): void {
-        this._storage[this.length] = value
-        this._heapifyUp(this.length)
-        this.length++
+        this.#heap.push(value)
+        this.#length++
+        this.#heapifyUp(this.#length - 1)
     }
 
-    // delete(index: number): T {
+    remove(): T | undefined {
+        if (this.#length === 0) {
+            return undefined
+        }
 
-    // }
+        const removed = this.#heap[0]
+        this.#length--
 
-    private _heapifyDown(index: number): void {
-        if (index >= this.length) {
+        if (this.#length === 0) {
+            this.#heap = []
+
+            return removed
+        }
+
+        this.#heap[0] = this.#heap.pop() as T
+        this.#heapifyDown(0)
+        return removed
+    }
+
+    get length(): number {
+        return this.#length
+    }
+
+    get heap(): readonly T[] {
+        return this.#heap
+    }
+
+    #heapifyUp(index: number): void {
+        if (index === 0) {
             return
         }
 
-        const leftIndex = this._leftChild(index)
-        const rightIndex = this._rightChild(index)
+        const parentIndex = this.#getParentIndex(index)
+        const parent = this.#heap[parentIndex]
+        const child = this.#heap[index]
+        const comparison = this.#compareFn(parent, child)
 
-        if (leftIndex >= this.length || rightIndex >= this.length) {
+        if (comparison === COMPARISON.BIGGER) {
+            swap(this.#heap, index, parentIndex)
+            this.#heapifyUp(parentIndex)
+        }
+    }
+
+    #heapifyDown(index: number): void {
+        const leftChildIndex = this.#getLeftChildIndex(index)
+        const rightChildIndex = this.#getRightChildIndex(index)
+
+        if (index >= this.#length || leftChildIndex >= this.#length) {
             return
         }
-    }
 
-    private _heapifyUp(index: number): void {
-        const parentIndex = this._parent(index)
-        const parentValue = this._storage[parentIndex]
-        const value = this._storage[index]
+        const leftChild = this.#heap[leftChildIndex]
+        const rightChild = this.#heap[rightChildIndex]
+        const item = this.#heap[index]
+        const childrenComparison = this.#compareFn(leftChild, rightChild)
 
-        if (parentValue > value) {
-            this._storage[index] = parentValue
-            this._storage[parentIndex] = value
-            this._heapifyUp(parentIndex)
+        if (
+            childrenComparison === COMPARISON.BIGGER &&
+            this.#compareFn(item, rightChild) === COMPARISON.BIGGER
+        ) {
+            swap(this.#heap, index, rightChildIndex)
+            this.#heapifyDown(rightChildIndex)
+        } else if (
+            childrenComparison === COMPARISON.SMALLER &&
+            this.#compareFn(item, leftChild) === COMPARISON.BIGGER
+        ) {
+            swap(this.#heap, index, leftChildIndex)
+            this.#heapifyDown(leftChildIndex)
         }
     }
 
-    private _parent(index: number): number {
-        return Math.floor((index - 1) / 2)
+    #getParentIndex(childIndex: number): number {
+        return Math.floor((childIndex - 1) / 2)
     }
 
-    private _leftChild(index: number): number {
-        return index * 2 + 1
+    #getLeftChildIndex(parentIndex: number): number {
+        return parentIndex * 2 + 1
     }
 
-    private _rightChild(index: number): number {
-        return index * 2 + 2
+    #getRightChildIndex(parentIndex: number): number {
+        return parentIndex * 2 + 2
     }
 }
