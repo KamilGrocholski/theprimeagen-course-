@@ -1,56 +1,47 @@
-import SingularLinkedList from './singularLinkedList'
+import Queue from "./queue";
 
-type Task<T> = () => Promise<T>
+export type Task = () => Promise<any>;
 
-export default class PromiseQueue<T> {
-    private _queue: SingularLinkedList<Task<T>>
+export default class PromiseQueue {
+  private _maxConcurrent: number;
+  private _queue: Queue<Task>;
+  private _running: number;
 
-    constructor(private _concurrent: number) {
-        this._queue = new SingularLinkedList()
+  constructor(_maxConcurrent: number) {
+    this._maxConcurrent = _maxConcurrent;
+    this._queue = new Queue();
+    this._running = 0;
+  }
+
+  enqueue(task: Task): void {
+    this._queue.enqueue(task);
+    this._runTask();
+  }
+
+  private async _runTask(): Promise<void> {
+    if (!this.shouldRun) {
+      return;
     }
 
-    async run(): Promise<T[]> {
-        let howManyTasks: number
-        if (this.size >= this._concurrent) {
-            howManyTasks = this._concurrent
-        } else {
-            howManyTasks = this._queue.size
-        }
+    const task = this._queue.dequeue() as Task;
 
-        const promises: Promise<T>[] = []
+    this._running++;
 
-        for (let i = 0; i < howManyTasks; ++i) {
-            const task = this._queue.shift()
+    task().finally(() => {
+      this._running--;
+      this._runTask();
+    });
+  }
 
-            if (!task) {
-                throw new Error(
-                    'task is undefined, check queue implementation or run function'
-                )
-            }
+  private get shouldRun(): boolean {
+    return this._running < this._maxConcurrent && this._queue.size > 0;
+  }
 
-            promises.push(
-                Promise.resolve(task())
-                    .then((value) => {
-                        return value
-                    })
-                    .catch((error) => {
-                        return error
-                    })
-            )
-        }
+  get running(): number {
+    return this._running;
+  }
 
-        const result = await Promise.all(promises)
-
-        return result
-    }
-
-    enqueue(tasks: Task<T>[]) {
-        tasks.forEach((task) => {
-            this._queue.append(task)
-        })
-    }
-
-    get size(): number {
-        return this._queue.size
-    }
+  get maxConcurrent(): number {
+    return this._maxConcurrent;
+  }
 }

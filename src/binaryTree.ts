@@ -43,7 +43,7 @@ export default class BinaryTree<T> {
 
     traverseLevelOrder(
         node: BinaryNode<T> | null,
-        callbackFn: (node: BinaryNode<T>) => void
+        callbackFn: (node: BinaryNode<T>) => void,
     ) {
         const queue: (BinaryNode<T> | null)[] = [node]
 
@@ -64,7 +64,7 @@ export default class BinaryTree<T> {
 
     traversePreOrder(
         node: BinaryNode<T> | null,
-        callbackFn: (node: BinaryNode<T>) => void
+        callbackFn: (node: BinaryNode<T>) => void,
     ) {
         if (!node) return
 
@@ -81,7 +81,7 @@ export default class BinaryTree<T> {
 
     traverseInOrder(
         node: BinaryNode<T> | null,
-        callbackFn: (node: BinaryNode<T>) => void
+        callbackFn: (node: BinaryNode<T>) => void,
     ) {
         if (!node) return
 
@@ -98,7 +98,7 @@ export default class BinaryTree<T> {
 
     traversePostOrder(
         node: BinaryNode<T> | null,
-        callbackFn: (node: BinaryNode<T>) => void
+        callbackFn: (node: BinaryNode<T>) => void,
     ) {
         if (!node) return
 
@@ -127,7 +127,7 @@ export default class BinaryTree<T> {
 
     private _findRecursive(
         node: BinaryNode<T> | null,
-        value: T
+        value: T,
     ): BinaryNode<T> | undefined {
         if (!node) {
             return undefined
@@ -150,7 +150,7 @@ export default class BinaryTree<T> {
 
     private _removeRecursive(
         node: BinaryNode<T> | null,
-        value: T
+        value: T,
     ): BinaryNode<T> | null {
         if (!node) {
             return null

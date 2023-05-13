@@ -1,29 +1,29 @@
-import SingularLinkedList from './singularLinkedList'
+import SingularLinkedList from "./singularLinkedList";
 
 export default class Queue<T> {
-    private _storage: SingularLinkedList<T>
+  private _storage: SingularLinkedList<T>;
 
-    constructor() {
-        this._storage = new SingularLinkedList()
-    }
+  constructor() {
+    this._storage = new SingularLinkedList();
+  }
 
-    pop(): T | undefined {
-        return this._storage.shift()
-    }
+  dequeue(): T | undefined {
+    return this._storage.shift();
+  }
 
-    push(value: T): void {
-        this._storage.append(value)
-    }
+  enqueue(value: T): void {
+    this._storage.append(value);
+  }
 
-    peek(): T | undefined {
-        return this._storage.head
-    }
+  peek(): T | undefined {
+    return this._storage.head;
+  }
 
-    get isEmpty(): boolean {
-        return this._storage.isEmpty()
-    }
+  get isEmpty(): boolean {
+    return this._storage.isEmpty();
+  }
 
-    get size(): number {
-        return this._storage.size
-    }
+  get size(): number {
+    return this._storage.size;
+  }
 }

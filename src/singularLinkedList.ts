@@ -1,92 +1,92 @@
 export class SingularNode<T> {
-    value: T
-    next: SingularNode<T> | null = null
+  value: T;
+  next: SingularNode<T> | null = null;
 
-    constructor(value: T) {
-        this.value = value
-    }
+  constructor(value: T) {
+    this.value = value;
+  }
 
-    static create<V>(value: V): SingularNode<V> {
-        return new SingularNode(value)
-    }
+  static create<V>(value: V): SingularNode<V> {
+    return new SingularNode(value);
+  }
 }
 
 export default class SingularLinkedList<T> {
-    private _head: SingularNode<T> | null = null
-    private _tail: SingularNode<T> | null = null
-    private _size = 0
+  private _head: SingularNode<T> | null = null;
+  private _tail: SingularNode<T> | null = null;
+  private _size = 0;
 
-    prepend(value: T): void {
-        const node = SingularNode.create(value)
-        this._size++
+  prepend(value: T): void {
+    const node = SingularNode.create(value);
+    this._size++;
 
-        if (!this._head) {
-            this._head = this._tail = node
-            return
-        }
-
-        node.next = this._head
-        this._head = node
+    if (!this._head) {
+      this._head = this._tail = node;
+      return;
     }
 
-    append(value: T): void {
-        const node = SingularNode.create(value)
-        this._size++
+    node.next = this._head;
+    this._head = node;
+  }
 
-        if (!this._tail) {
-            this._tail = this._head = node
-            return
-        }
+  append(value: T): void {
+    const node = SingularNode.create(value);
+    this._size++;
 
-        this._tail.next = node
-        this._tail = node
+    if (!this._tail) {
+      this._tail = this._head = node;
+      return;
     }
 
-    shift(): T | undefined {
-        const head = this._head
+    this._tail.next = node;
+    this._tail = node;
+  }
 
-        if (!head) {
-            return undefined
-        }
+  shift(): T | undefined {
+    const head = this._head;
 
-        if (head === this._tail) {
-            this.clear()
-
-            return head.value
-        }
-
-        this._size--
-        this._head = head.next
-
-        return head.value
+    if (!head) {
+      return undefined;
     }
 
-    isEmpty(): boolean {
-        return this._head === null
+    if (head === this._tail) {
+      this.clear();
+
+      return head.value;
     }
 
-    clear(): void {
-        this._size = 0
-        this._head = this._tail = null
-    }
+    this._size--;
+    this._head = head.next;
 
-    get head(): T | undefined {
-        return this._head?.value
-    }
+    return head.value;
+  }
 
-    get tail(): T | undefined {
-        return this._tail?.value
-    }
+  isEmpty(): boolean {
+    return this._head === null;
+  }
 
-    get size(): number {
-        return this._size
-    }
+  clear(): void {
+    this._size = 0;
+    this._head = this._tail = null;
+  }
 
-    *[Symbol.iterator]() {
-        let node = this._head
-        while (node) {
-            yield node
-            node = node.next
-        }
+  get head(): T | undefined {
+    return this._head?.value;
+  }
+
+  get tail(): T | undefined {
+    return this._tail?.value;
+  }
+
+  get size(): number {
+    return this._size;
+  }
+
+  *[Symbol.iterator]() {
+    let node = this._head;
+    while (node) {
+      yield node;
+      node = node.next;
     }
+  }
 }
